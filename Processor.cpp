@@ -33,7 +33,7 @@ void Processor::LOAD(int iii)
     std::ifstream DATA(file);
     if (DATA.fail())
     {
-        std::cerr << "Could not find file" << std::endl;
+        std::cerr << "Could not find file " << file << std::endl;
         exit(1);
     }
 
