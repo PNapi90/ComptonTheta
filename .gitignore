@@ -1,0 +1,7 @@
+*.dat
+CEdge
+HistIt
+Gammas/*
+.vscode/*
+.vscode/
+ProcessedData/*
