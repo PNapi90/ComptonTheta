@@ -144,6 +144,7 @@ std::thread Processor::threading()
             for(int i = offset;i < offset+fileAmount;++i)
             {
                 LOAD(i);
+                if(offset == 0) std::cout << std::endl;
             }
         }
     );

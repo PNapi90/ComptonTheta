@@ -6,8 +6,8 @@
 int main()
 {
 
-    int fileAmount = 25;
-    int nthr = 40;
+    int fileAmount = 100;
+    int nthr = 10;
 
     std::vector<std::shared_ptr<Processor> > P;
     P.reserve(nthr);
