@@ -1,2 +1,2 @@
 all:
-	g++ -std=c++11 Processor.cpp Main.cpp -o CEdge
+	g++ -std=c++11 -pthread -g Processor.cpp Main.cpp -o CEdge
