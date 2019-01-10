@@ -10,7 +10,7 @@
 
 bool FillHistogram(std::vector<double> &Values, std::vector<std::vector<double> > &Hist)
 {
-    double binningX = 600./Hist.size();
+    double binningX = 700./Hist.size();
     double binningY = 180./Hist[0].size();
     for(int i = 0;i < Hist.size();++i)
     {
