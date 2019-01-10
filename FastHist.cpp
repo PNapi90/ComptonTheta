@@ -10,11 +10,11 @@
 
 bool FillHistogram(std::vector<double> &Values, std::vector<std::vector<double> > &Hist)
 {
-    for(int i = 0;i < 350;++i)
+    for(int i = 0;i < Hist.size();++i)
     {
         if(Values[0] >= i*2 && Values[0] < (i+1)*2)
         {
-            for(int j = 0;j < 180;++j)
+            for(int j = 0;j < Hist[i].size();++j)
             {
                 if(Values[1] >= j && Values[1] < j+1)
                 {
@@ -36,7 +36,7 @@ int main()
     std::ifstream DATA;
 
     std::vector<double> Values(2, 0);
-    std::vector<std::vector<double>> Hist(350, std::vector<double>(180, 0));
+    std::vector<std::vector<double>> Hist(350/2, std::vector<double>(180/2, 0));
 
     bool tmpBool = true;
 
@@ -77,8 +77,8 @@ int main()
     std::cout << "Normalizing histograms ...";
     std::cout.flush();
 
-    std::vector<double> Norms(350,0);
-    for(int i = 0;i < 350;++i)
+    std::vector<double> Norms(Hist.size(),0);
+    for (int i = 0; i < Hist.size(); ++i)
     {
         for (auto Val : Hist[i]) Norms[i] += Val;
     }
@@ -89,7 +89,7 @@ int main()
     std::cout.flush();
 
     std::ofstream OUT("HistsOut.dat");
-    for (int i = 0; i < 350; ++i)
+    for (int i = 0; i < Hist.size(); ++i)
     {
 
         Norms[i] = Norms[i] > 0 ? Norms[i] : 1.;

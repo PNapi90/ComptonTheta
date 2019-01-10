@@ -16,21 +16,25 @@ angles = [i for i in range(180)]
 
 colors = py.cm.jet(np.linspace(0,1,len(data)))
 
+cArr = [0,20,40,60,80,100,120,140,160,180,200]
+
 py.figure(1,figsize=(5,4))
 py.clf()
 for i in range(len(data)-1):
-    if i % 10 != 0 or i*2 > 500:
+    if i*2 < 480:
         continue
-    py.plot(angles,data[i,:],color=colors[i],ls=":",marker='o',lw=1.5,ms=3)#,label=str(i*2))
+    if i % 20 != 0:
+        continue
+    py.plot(angles,data[i,:],color=colors[cArr[(i - 240)//10]],ls="None",marker='o',lw=1.5,ms=3,label=str(i*2))
     #py.axvline(i*2,color=colors[i],ls=':')
 py.tick_params(axis='both', which='major', labelsize=15)
 py.tick_params(axis='both', which='minor', labelsize=10)
 py.xlabel("$\\theta$ in deg",fontsize=20)
 py.ylabel("Probability Density",fontsize = 20)
-
+py.legend(loc=2)
 py.savefig("sampled.pdf",bbox_inches="tight")
 
-
+"""
 data2 = np.loadtxt("Processed.dat")
 
 
@@ -57,7 +61,7 @@ py.xlabel("$E_{dep}$ in keV",fontsize = 20)
 #py.plot(Edeps,angles,color="k",lw=1)
 py.savefig("sampled2.pdf",bbox_inches="tight")
 
-"""
+
 iter = 0
 anglesSave = np.zeros(len(data2))
 
