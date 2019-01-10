@@ -10,13 +10,15 @@
 
 bool FillHistogram(std::vector<double> &Values, std::vector<std::vector<double> > &Hist)
 {
+    double binningX = 600./Hist.size();
+    double binningY = 180./Hist[0].size();
     for(int i = 0;i < Hist.size();++i)
     {
-        if(Values[0] >= i*2 && Values[0] < (i+1)*2)
+        if(Values[0] >= i*binningX && Values[0] < (i+1)*binningX)
         {
             for(int j = 0;j < Hist[i].size();++j)
             {
-                if(Values[1] >= j && Values[1] < j+1)
+                if(Values[1] >= j*binningY && Values[1] < (j+1)*binningY)
                 {
                     Hist[i][j] += 1.;
                     return true;
