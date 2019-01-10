@@ -42,7 +42,7 @@ int main()
 
     for (int i = 0; i < 10; ++i)
     {
-        name = "ProcessedData/Processed" + std::to_string(i * 100) + ".dat";
+        name = "ProcessedData/Processed" + std::to_string(i * 100);
         DATA.open(name);
 
         if(DATA.fail())
