@@ -46,7 +46,7 @@ int main()
     std::vector<double> binsArray(101,0);
     for(int i = 0;i < 101;++i)
     {
-        binsArray[i] = (double) (-1. + 2.*i/101.);
+        binsArray[i] = (double) (-1. + 2.*i/100.);
     }
 
     bool tmpBool = true;
