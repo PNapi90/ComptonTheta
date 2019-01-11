@@ -4,11 +4,14 @@
 #include <sstream>
 #include <iterator>
 #include <vector>
+#include <cmath>
 
 
 //-----------------------------------------------------------------------------------------------------------------------
 
-bool FillHistogram(std::vector<double> &Values, std::vector<std::vector<double> > &Hist)
+bool FillHistogram(std::vector<double> &Values, 
+                   std::vector<std::vector<double> > &Hist,
+                   std::vector<double> &binsArray)
 {
     double binningX = 700./Hist.size();
     double binningY = 180./Hist[0].size();
@@ -18,7 +21,7 @@ bool FillHistogram(std::vector<double> &Values, std::vector<std::vector<double> 
         {
             for(int j = 0;j < Hist[i].size();++j)
             {
-                if(Values[1] >= j*binningY && Values[1] < (j+1)*binningY)
+                if (Values[1] >= binsArray[j] && Values[1] < binsArray[j+1])
                 {
                     Hist[i][j] += 1.;
                     return true;
@@ -38,7 +41,13 @@ int main()
     std::ifstream DATA;
 
     std::vector<double> Values(2, 0);
-    std::vector<std::vector<double>> Hist(350/2, std::vector<double>(180/2, 0));
+    std::vector<std::vector<double>> Hist(350/2, std::vector<double>(101, 0));
+
+    std::vector<double> binsArray(101,0);
+    for(int i = 0;i < 101;++i)
+    {
+        binsArray[i] = (double) (-1. + 2.*i/101.);
+    }
 
     bool tmpBool = true;
 
@@ -66,7 +75,9 @@ int main()
             if (Values[1] != Values[1])
                 continue;
 
-            tmpBool = FillHistogram(Values, Hist);
+            Values[1] = cos(Values[1]*M_PI/180.);
+
+            tmpBool = FillHistogram(Values, Hist,binsArray);
             if (!tmpBool)
                 return 1;
         }
@@ -90,7 +101,7 @@ int main()
     std::cout << "Saving histogram ... ";
     std::cout.flush();
 
-    std::ofstream OUT("HistsOut.dat");
+    std::ofstream OUT("HistsOut");
     for (int i = 0; i < Hist.size(); ++i)
     {
 
