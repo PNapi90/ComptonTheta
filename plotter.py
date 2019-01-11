@@ -12,26 +12,41 @@ from matplotlib.colors import LogNorm
 
 data = np.loadtxt("HistsOut.dat")
 
-angles = [i for i in range(180)]
+Abins = 90
+bins = 180/Abins
 
-colors = py.cm.jet(np.linspace(0,1,len(data)))
+Ebins = 700/(350/2)
+
+angles = [i*bins for i in range(Abins)]
+
+colors = py.cm.gist_rainbow(np.linspace(0,1,len(data)))
 
 cArr = [0,20,40,60,80,100,120,140,160,180,200]
+
+markerArr = ["x","*","v","^","<",">","1","2","3","4"]
+miter = 0
 
 py.figure(1,figsize=(5,4))
 py.clf()
 for i in range(len(data)-1):
-    if i*2 < 480:
+    if i*Ebins >= 600:
         continue
-    if i % 20 != 0:
+    if i % 8 != 0:
         continue
-    py.plot(angles,data[i,:],color=colors[cArr[(i - 240)//10]],ls="None",marker='o',lw=1.5,ms=3,label=str(i*2))
+    if i*Ebins >= 470:
+        py.plot(angles,data[i,:],color=colors[i],ls="--",lw=1,marker=markerArr[miter],ms=2,label=str(i*Ebins))
+        miter += 1
+    else:
+        py.plot(angles,data[i,:],color=colors[i],ls="--",lw=1,marker='o',ms=1.5)
+
     #py.axvline(i*2,color=colors[i],ls=':')
 py.tick_params(axis='both', which='major', labelsize=15)
 py.tick_params(axis='both', which='minor', labelsize=10)
 py.xlabel("$\\theta$ in deg",fontsize=20)
 py.ylabel("Probability Density",fontsize = 20)
-py.legend(loc=2)
+py.yscale('log')
+py.legend(loc=1,fontsize=8)
+py.ylim([1e-6,10])
 py.savefig("sampled.pdf",bbox_inches="tight")
 
 """
