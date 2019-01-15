@@ -2,14 +2,14 @@
 
 //-------------------------------------------------------
 
-Processor::Processor(int offset, int fileAmount)
+Processor::Processor(int offset, int fileAmount,int _m_offset) : m_offset(_m_offset)
 {
     Photon = std::vector<std::vector<double> >(100,std::vector<double>(4,0));
 
-    OUT.open("ProcessedData/Processed"+std::to_string(offset));
+    OUT.open("ProcessedData/Processed"+std::to_string(offset+m_offset));
     if(OUT.fail())
     {
-        std::cerr << "File ProcessedData/Processed" + std::to_string(offset) << " not opened!" << std::endl;
+        std::cerr << "File ProcessedData/Processed" + std::to_string(offset+m_offset) << " not opened!" << std::endl;
         exit(1);
     }
 
@@ -57,7 +57,9 @@ void Processor::LOAD(int iii)
         }
         if(!DataComing) continue;
 
-        std::istringstream Buffer(line);
+        sscanf(line.c_str(), format, &PhotonData[0],&PhotonData[1],&PhotonData[2],&PhotonData[3],&PhotonData[4],&PhotonData[5]);
+
+        /*std::istringstream Buffer(line);
         std::vector<std::string> Words(std::istream_iterator<std::string>{Buffer},
                                        std::istream_iterator<std::string>() );
 
@@ -66,11 +68,11 @@ void Processor::LOAD(int iii)
             std::cerr << Words.size() << " <- Words size != 6" << std::endl;
             exit(1);
         }
-
-        for(int i = 0;i < Words.size();++i)
+        
+        for (int i = 0; i < Words.size(); ++i)
         {
             PhotonData[i] = std::stod(Words[i]);
-        }
+        }*/
 
         //new photon starting
         if(PhotonData[0] == -1)
@@ -139,15 +141,14 @@ std::string Processor::GetName(int iii)
 std::thread Processor::threading()
 {
     return std::thread(
-        [=]
-        {
-            for(int i = offset;i < offset+fileAmount;++i)
+        [=] {
+            for (int i = offset + m_offset; i < offset + fileAmount + m_offset; ++i)
             {
                 LOAD(i);
-                if(offset == 0) std::cout << std::endl;
+                if(offset == 0)
+                    std::cout << std::endl;
             }
-        }
-    );
+        });
 }
 
 //-------------------------------------------------------

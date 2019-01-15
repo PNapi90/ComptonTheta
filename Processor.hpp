@@ -14,22 +14,24 @@ class Processor
 {
 
 private:
-    
-    std::vector<std::vector<double> > Photon;
+
+    const char *format = "%lf %lf %lf %lf %lf %lf ";
+
+    std::vector<std::vector<double>> Photon;
 
     std::ofstream OUT;
 
-    int offset, fileAmount;
+    int offset, fileAmount, m_offset;
 
     void LOAD(int iii);
-    void Process(int iter,double Esum);
+    void Process(int iter, double Esum);
 
     std::string GetName(int iii);
 
 
 public:
 
-    Processor(int offset, int fileAmount);
+    Processor(int offset, int fileAmount,int _m_offset);
     ~Processor();
 
     std::thread threading();
