@@ -28,7 +28,7 @@ int main(int argc,char** argv)
         }
     }
 
-    int fileAmount = 170;
+    int fileAmount = 70;
     int nthr = 10;
 
     std::vector<std::shared_ptr<Processor> > P;
