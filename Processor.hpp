@@ -15,23 +15,33 @@ class Processor
 
 private:
 
-    const char *format = "%lf %lf %lf %lf %lf %lf ";
+    const char *format = "%lf %lf %lf %lf %lf %lf";
 
-    std::vector<std::vector<double>> Photon;
+    std::vector<std::vector<double>> Photon,Hist;
+    std::vector<double> binsArray;
 
     std::ofstream OUT;
 
-    int offset, fileAmount, m_offset;
+    int offset, fileAmount, m_offset,Energy,thrN;
 
     void LOAD(int iii);
     void Process(int iter, double Esum);
+    void SaveHist();
+
+    bool FillHistogram(std::vector<double> &Values);
+
 
     std::string GetName(int iii);
+    std::string GetName(int iii,bool tmp);
+
 
 
 public:
 
-    Processor(int offset, int fileAmount,int _m_offset);
+    Processor(int offset,
+              int fileAmount,
+              int _m_offset,
+              int _Energy);
     ~Processor();
 
     std::thread threading();

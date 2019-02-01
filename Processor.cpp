@@ -2,26 +2,40 @@
 
 //-------------------------------------------------------
 
-Processor::Processor(int offset, int fileAmount,int _m_offset) : m_offset(_m_offset)
+Processor::Processor(int offset,
+                     int fileAmount,
+                     int _m_offset,
+                     int _Energy) 
+    : m_offset(0),
+      Energy(_Energy)
 {
     Photon = std::vector<std::vector<double> >(100,std::vector<double>(4,0));
+    Hist = std::vector<std::vector<double> >(350/2, std::vector<double>(101, 0));
 
-    OUT.open("ProcessedData/Processed"+std::to_string(offset+m_offset));
-    if(OUT.fail())
+    binsArray = std::vector<double>(101,0);
+    for(int i = 0;i < 101;++i)
     {
-        std::cerr << "File ProcessedData/Processed" + std::to_string(offset+m_offset) << " not opened!" << std::endl;
-        exit(1);
+        binsArray[i] = (double) (-1. + 2.*i/100.);
     }
 
-    this->offset = offset;
-    this->fileAmount = fileAmount;
+
+    /*OUT.open("ProcessedData/Processed_Edeps_"+std::to_string(Energy)+".dat");
+    if(OUT.fail())
+    {
+        std::cerr << "File ProcessedData/Processed" + std::to_string(Energy) << " not opened!" << std::endl;
+        exit(1);
+    }
+    */
+    thrN = offset;
+    this->offset = 0;
+    this->fileAmount = 1;
 }
 
 //-------------------------------------------------------
 
 Processor::~Processor()
 {
-    OUT.close();
+    //OUT.close();
 }
 
 //-------------------------------------------------------
@@ -29,7 +43,7 @@ Processor::~Processor()
 void Processor::LOAD(int iii)
 {   
 
-    std::string file = GetName(iii);
+    std::string file = GetName(0,true);
     std::ifstream DATA(file);
     if (DATA.fail())
     {
@@ -38,7 +52,7 @@ void Processor::LOAD(int iii)
     }
 
     std::string line;
-    bool DataComing = false;
+    bool DataComing = true;
 
     int iter = 0;
     bool PhotonStart = false;
@@ -59,31 +73,19 @@ void Processor::LOAD(int iii)
 
         sscanf(line.c_str(), format, &PhotonData[0],&PhotonData[1],&PhotonData[2],&PhotonData[3],&PhotonData[4],&PhotonData[5]);
 
-        /*std::istringstream Buffer(line);
-        std::vector<std::string> Words(std::istream_iterator<std::string>{Buffer},
-                                       std::istream_iterator<std::string>() );
-
-        if(Words.size() != PhotonData.size())
-        {
-            std::cerr << Words.size() << " <- Words size != 6" << std::endl;
-            exit(1);
-        }
-        
-        for (int i = 0; i < Words.size(); ++i)
-        {
-            PhotonData[i] = std::stod(Words[i]);
-        }*/
 
         //new photon starting
         if(PhotonData[0] == -1)
         {
             PhotonStart = true;
-            if(iter > 0) Process(iter,Esum);
+
+            if(iter > 0)
+                Process(iter,Esum);
 
             Esum = 0.;
             iter = 0;
             ++iterator;
-            if (iterator % 100000 == 0 && offset == 0)
+            if (iterator % 100000 == 0 && thrN == 0)
             {   
                 std::cout << "\r";
                 std::cout << iii <<" -> iterator at photon # " << iterator << "\t\t\t\t\t\t";
@@ -103,14 +105,17 @@ void Processor::LOAD(int iii)
         }
         
     }
+
+    SaveHist();
 }
 
 //-------------------------------------------------------
 
 void Processor::Process(int iter,double Esum)
 {
-    if(iter == 2 && Esum == 661.7)
+    if(iter == 2 && Esum == Energy)
     {
+        std::vector<double> Values(2,0);
         double angleX = 0;
         double norm1 = 0,norm2 = 0,scalar = 0;
 
@@ -121,8 +126,16 @@ void Processor::Process(int iter,double Esum)
             scalar += (Photon[1][i+1] - Photon[0][i+1])*(Photon[0][i+1]);
         }
 
-        angleX = acos(scalar/sqrt(norm1*norm2))*180./M_PI;
-        OUT << Photon[0][0] << " " << angleX << std::endl;
+        angleX = (scalar/sqrt(norm1*norm2));//*180./M_PI;
+
+        Values[0] = Photon[0][0];
+        Values[1] = angleX;
+
+        bool check = FillHistogram(Values);
+
+        if(!check)
+            exit(1);
+        //OUT << Photon[0][0] << " " << angleX << std::endl;
     }
 }
 
@@ -138,17 +151,65 @@ std::string Processor::GetName(int iii)
 
 //-------------------------------------------------------
 
+std::string Processor::GetName(int iii,bool tmp)
+{
+    std::string AllEns = "AllEnergies/Edeps_"+std::to_string(Energy)+".dat";
+    return AllEns;
+}
+
+//-------------------------------------------------------
+
 std::thread Processor::threading()
 {
-    return std::thread(
-        [=] {
-            for (int i = offset + m_offset; i < offset + fileAmount + m_offset; ++i)
+    return std::thread([=] {LOAD(0);});
+}
+
+//-------------------------------------------------------
+
+bool Processor::FillHistogram(std::vector<double> &Values)
+{
+    double binningX = 700./Hist.size();
+    for(int i = 0;i < Hist.size();++i)
+    {
+        if(Values[0] >= i*binningX && Values[0] < (i+1)*binningX)
+        {
+            for(int j = 0;j < Hist[i].size();++j)
             {
-                LOAD(i);
-                if(offset == 0)
-                    std::cout << std::endl;
+                if (Values[1] >= binsArray[j] && Values[1] < binsArray[j+1])
+                {
+                    Hist[i][j] += 1.;
+                    return true;
+                }
             }
-        });
+        }
+    }
+    std::cerr << Values[0] << "," << Values[1] << " didn't find a match!" << std::endl;
+    return false;
+}
+
+//-------------------------------------------------------
+
+void Processor::SaveHist()
+{
+
+    std::vector<double> Norms(Hist.size(),0);
+    for (int i = 0; i < Hist.size(); ++i)
+    {
+        for (auto Val : Hist[i]) Norms[i] += Val;
+    }
+
+    std::ofstream OUT("Histograms/Histe_E_" + std::to_string(Energy));
+    for (int i = 0; i < Hist.size(); ++i)
+    {
+
+        Norms[i] = Norms[i] > 0 ? Norms[i] : 1.;
+
+        for (auto Val : Hist[i]) 
+            OUT << Val/Norms[i] << " ";
+        OUT << std::endl;        
+    }
+
+    OUT.close();
 }
 
 //-------------------------------------------------------

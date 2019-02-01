@@ -7,8 +7,8 @@
 int main(int argc,char** argv)
 {
 
-    int offset = 0;
-    bool oflag = false;
+    int offset = 0,Energy = 0;
+    bool oflag = false,Eflag = false;
     
     std::string s;
 
@@ -26,6 +26,17 @@ int main(int argc,char** argv)
             oflag = false;
             continue;
         }
+        if(s == "-E")
+        {
+            Eflag = true;
+            continue;
+        }
+        if(Eflag)
+        {
+            Energy = std::stoi(s);
+            Eflag = false;
+            continue;
+        }
     }
 
     int fileAmount = 70;
@@ -34,11 +45,32 @@ int main(int argc,char** argv)
     std::vector<std::shared_ptr<Processor> > P;
     P.reserve(nthr);
 
-    for(int i = 0;i < nthr;++i) P.push_back(std::make_shared<Processor>(i*fileAmount,fileAmount,offset));
+    std::vector<int> Energies(100,0);
 
-    std::thread t[nthr];
-    for(int i = 0;i < nthr;++i) t[i] = P[i]->threading();
-    for(int i = 0;i < nthr;++i) t[i].join();
+    for(int i = 0;i < 100;++i)
+        Energies[i] = i*25;
+
+    int iter_Thr = 0;
+
+    while(iter_Thr < 10)
+    {
+        for(int i = 0;i < nthr;++i)
+            P.push_back(std::make_shared<Processor>(i,fileAmount,0,Energies[i]));
+        
+        std::thread t[nthr];
+        for(int i = 0;i < nthr;++i) t[i] = P[i]->threading();
+        for(int i = 0;i < nthr;++i) t[i].join();
+
+        for(int i = 0;i < nthr;++i) P.pop_back();
+
+        std::cout << "Thread iteration " << iter_Thr << " done" << std::endl;
+
+        ++iter_Thr;
+    }
+
+    
+
+    
 
     return 0;
 }
