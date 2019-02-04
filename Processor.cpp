@@ -8,9 +8,13 @@ Processor::Processor(int offset,
                      int _Energy) 
     : m_offset(0),
       Energy(_Energy)
-{
+{   
+
+
+    nbins = Energy/4 + 1;
+
     Photon = std::vector<std::vector<double> >(100,std::vector<double>(4,0));
-    Hist = std::vector<std::vector<double> >(350/2, std::vector<double>(101, 0));
+    Hist = std::vector<std::vector<double> >(nbins, std::vector<double>(101, 0));
 
     binsArray = std::vector<double>(101,0);
     for(int i = 0;i < 101;++i)
@@ -18,14 +22,8 @@ Processor::Processor(int offset,
         binsArray[i] = (double) (-1. + 2.*i/100.);
     }
 
+    std::cout << "Created processor for E = " << Energy << " with " << nbins << " bins" << std::endl;
 
-    /*OUT.open("ProcessedData/Processed_Edeps_"+std::to_string(Energy)+".dat");
-    if(OUT.fail())
-    {
-        std::cerr << "File ProcessedData/Processed" + std::to_string(Energy) << " not opened!" << std::endl;
-        exit(1);
-    }
-    */
     thrN = offset;
     this->offset = 0;
     this->fileAmount = 1;
@@ -172,7 +170,7 @@ std::thread Processor::threading()
 
 bool Processor::FillHistogram(std::vector<double> &Values)
 {
-    double binningX = 700./Hist.size();
+    double binningX = ((double) Energy)/((double) nbins-1);
     for(int i = 0;i < Hist.size();++i)
     {
         if(Values[0] >= i*binningX && Values[0] < (i+1)*binningX)
@@ -205,7 +203,7 @@ void Processor::SaveHist()
         for (auto Val : Hist[i]) Norms[i] += Val;
     }
 
-    std::ofstream OUT("Histograms/Histe_E_" + std::to_string(Energy));
+    std::ofstream OUT("Histograms/Hist_E_" + std::to_string(Energy));
     for (int i = 0; i < Hist.size(); ++i)
     {
 

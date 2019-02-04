@@ -77,7 +77,7 @@ int main(int argc,char** argv)
     } 
 
     int E_iter = 0;
-
+    std::cout << "---------------------------------------------" << std::endl;
     while (iter_Thr < NEnergies/nthr)
     {
         for(int i = 0;i < nthr;++i)
@@ -85,6 +85,9 @@ int main(int argc,char** argv)
             P.push_back(std::make_shared<Processor>(i,fileAmount,0,Energies[E_iter]));
             ++E_iter;
         }
+
+        std::cout << "================" << std::endl;
+
         std::thread t[nthr];
         
         for(int i = 0;i < nthr;++i)
@@ -97,6 +100,7 @@ int main(int argc,char** argv)
             P.pop_back();
 
         std::cout << "\nThread iteration " << iter_Thr << " done" << std::endl;
+        std::cout << "---------------------------------------------" << std::endl;
 
         ++iter_Thr;
     }

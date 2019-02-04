@@ -22,7 +22,7 @@ private:
 
     std::ofstream OUT;
 
-    int offset, fileAmount, m_offset,Energy,thrN;
+    int offset, fileAmount, m_offset,Energy,thrN,nbins;
 
     void LOAD(int iii);
     void Process(int iter, double Esum);
