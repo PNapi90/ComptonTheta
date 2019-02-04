@@ -50,7 +50,7 @@ int main(int argc,char** argv)
     std::vector<int> Energies(NEnergies, 0);
 
     for (int i = 0; i < NEnergies; ++i)
-        Energies[i] = i*25;
+        Energies[i] = i*25+25;
 
     int iter_Thr = 0;
 
