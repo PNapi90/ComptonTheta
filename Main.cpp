@@ -4,11 +4,17 @@
 
 #include "Processor.hpp"
 
+//-------------------------------------------------------
+
+void PrintError(int NEnergies,int nthr);
+
+//-------------------------------------------------------
+
 int main(int argc,char** argv)
 {
 
-    int offset = 0,Energy = 0;
-    bool oflag = false,Eflag = false;
+    int offset = 0,Energy = 0,nthr = 1;
+    bool oflag = false,Eflag = false,thrflag = false;
     
     std::string s;
 
@@ -26,6 +32,17 @@ int main(int argc,char** argv)
             oflag = false;
             continue;
         }
+        if (s == "-n")
+        {
+            thrflag = true;
+            continue;
+        }
+        if (thrflag)
+        {
+            nthr = std::stoi(s);
+            thrflag = false;
+            continue;
+        }
         if(s == "-E")
         {
             Eflag = true;
@@ -40,7 +57,6 @@ int main(int argc,char** argv)
     }
 
     int fileAmount = 70;
-    int nthr = 10;
 
     std::vector<std::shared_ptr<Processor> > P;
     P.reserve(nthr);
@@ -54,11 +70,21 @@ int main(int argc,char** argv)
 
     int iter_Thr = 0;
 
-    while (iter_Thr < NEnergies/10)
+    if(NEnergies % nthr != 0)
+    {
+        PrintError(NEnergies,nthr);
+        return -1;
+    } 
+
+    int E_iter = 0;
+
+    while (iter_Thr < NEnergies/nthr)
     {
         for(int i = 0;i < nthr;++i)
-            P.push_back(std::make_shared<Processor>(i,fileAmount,0,Energies[i]));
-        
+        {
+            P.push_back(std::make_shared<Processor>(i,fileAmount,0,Energies[E_iter]));
+            ++E_iter;
+        }
         std::thread t[nthr];
         
         for(int i = 0;i < nthr;++i)
@@ -70,7 +96,7 @@ int main(int argc,char** argv)
         for(int i = 0;i < nthr;++i) 
             P.pop_back();
 
-        std::cout << "Thread iteration " << iter_Thr << " done" << std::endl;
+        std::cout << "\nThread iteration " << iter_Thr << " done" << std::endl;
 
         ++iter_Thr;
     }
@@ -81,3 +107,14 @@ int main(int argc,char** argv)
 
     return 0;
 }
+
+//-------------------------------------------------------
+
+void PrintError(int NEnergies,int nthr)
+{
+    std::cerr << NEnergies << " mod " << nthr << " not 0!" << std::endl;
+    std::cerr << "Non equal distribution of data on threads!" << std::endl;
+    std::cerr << "Please reset your number of threads according to NEnergies" << std::endl;
+}
+
+//-------------------------------------------------------

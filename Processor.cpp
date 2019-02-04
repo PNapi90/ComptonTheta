@@ -130,6 +130,10 @@ void Processor::Process(int iter,double Esum)
 
         Values[0] = Photon[0][0];
         Values[1] = angleX;
+        
+        //bypass distance problem (norm2 == 0) of Geant4
+        if(norm1 == 0 || norm2 == 0)
+            return;
 
         bool check = FillHistogram(Values);
 
@@ -183,6 +187,9 @@ bool Processor::FillHistogram(std::vector<double> &Values)
             }
         }
     }
+
+    int tmp = 12;
+
     std::cerr << Values[0] << "," << Values[1] << " didn't find a match!" << std::endl;
     return false;
 }
