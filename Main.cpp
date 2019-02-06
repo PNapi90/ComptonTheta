@@ -32,7 +32,7 @@ int main(int argc,char** argv)
             oflag = false;
             continue;
         }
-        if (s == "-n")
+        if (s == "-t")
         {
             thrflag = true;
             continue;
@@ -61,7 +61,7 @@ int main(int argc,char** argv)
     std::vector<std::shared_ptr<Processor> > P;
     P.reserve(nthr);
 
-    int NEnergies = 275/25;
+    int NEnergies = 250/25;
 
     std::vector<int> Energies(NEnergies, 0);
 

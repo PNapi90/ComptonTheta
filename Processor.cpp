@@ -203,7 +203,7 @@ void Processor::SaveHist()
         for (auto Val : Hist[i]) Norms[i] += Val;
     }
 
-    std::ofstream OUT("Histograms/Hist_E_" + std::to_string(Energy));
+    std::ofstream OUT("Histograms/ComptonHist_" + std::to_string(Energy));
     for (int i = 0; i < Hist.size(); ++i)
     {
 
