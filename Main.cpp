@@ -61,7 +61,7 @@ int main(int argc,char** argv)
     std::vector<std::shared_ptr<Processor> > P;
     P.reserve(nthr);
 
-    int NEnergies = 30;
+    int NEnergies = 275/25;
 
     std::vector<int> Energies(NEnergies, 0);
 
