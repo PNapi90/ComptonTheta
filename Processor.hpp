@@ -26,7 +26,7 @@ private:
 
     void LOAD(int iii);
     void Process(int iter, double Esum);
-    void SaveHist();
+    void SaveHist(int iii);
 
     bool FillHistogram(std::vector<double> &Values);
 

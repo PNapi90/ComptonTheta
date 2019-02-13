@@ -107,7 +107,7 @@ void Processor::LOAD(int iii)
         
     }
 
-    SaveHist();
+    SaveHist(iii);
 }
 
 //-------------------------------------------------------
@@ -207,7 +207,7 @@ bool Processor::FillHistogram(std::vector<double> &Values)
 
 //-------------------------------------------------------
 
-void Processor::SaveHist()
+void Processor::SaveHist(int iii)
 {
 
     std::vector<double> Norms(Hist.size(),0);
@@ -216,7 +216,7 @@ void Processor::SaveHist()
         for (auto Val : Hist[i]) Norms[i] += Val;
     }
 
-    std::ofstream OUT("Histograms/ComptonHist_" + std::to_string(Energy) + "_" + std::to_string(thrN));
+    std::ofstream OUT("Histograms/ComptonHist_" + std::to_string(Energy) + "_" + std::to_string(thrN)+"_"+std::to_string(iii));
     for (int i = 0; i < Hist.size(); ++i)
     {
 
