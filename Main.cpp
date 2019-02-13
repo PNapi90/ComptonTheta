@@ -108,8 +108,8 @@ int main(int argc,char** argv)
 
     
 
-    std::vector<std::shared_ptr<Processor>> P;
-    P.reserve(nthr);
+    //std::vector<std::shared_ptr<Processor>> P;
+    //P.reserve(nthr);
 
     for (int i = 0; i < nthr; ++i)
         P.push_back(std::make_shared<Processor>(i * fileAmount, fileAmount, offset,661.7));
