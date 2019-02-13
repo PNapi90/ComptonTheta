@@ -56,7 +56,7 @@ int main(int argc,char** argv)
         }
     }
 
-    int fileAmount = 70;
+    int fileAmount = 100;
 
     std::vector<std::shared_ptr<Processor> > P;
     P.reserve(nthr);
@@ -78,7 +78,7 @@ int main(int argc,char** argv)
 
     int E_iter = 0;
     std::cout << "---------------------------------------------" << std::endl;
-    while (iter_Thr < NEnergies/nthr)
+    /*while (iter_Thr < NEnergies/nthr)
     {
         for(int i = 0;i < nthr;++i)
         {
@@ -104,10 +104,21 @@ int main(int argc,char** argv)
 
         ++iter_Thr;
     }
+    */
 
     
 
-    
+    std::vector<std::shared_ptr<Processor>> P;
+    P.reserve(nthr);
+
+    for (int i = 0; i < nthr; ++i)
+        P.push_back(std::make_shared<Processor>(i * fileAmount, fileAmount, offset,661.7));
+
+    std::thread t[nthr];
+    for (int i = 0; i < nthr; ++i)
+        t[i] = P[i]->threading();
+    for (int i = 0; i < nthr; ++i)
+        t[i].join();
 
     return 0;
 }
