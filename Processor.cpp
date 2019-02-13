@@ -39,9 +39,10 @@ Processor::~Processor()
 //-------------------------------------------------------
 
 void Processor::LOAD(int iii)
-{   
+{
 
-    std::string file = GetName(0,true);
+    //std::string file = GetName(0,true);
+    std::string file = GetName(iii);
     std::ifstream DATA(file);
     if (DATA.fail())
     {
@@ -111,7 +112,7 @@ void Processor::LOAD(int iii)
 
 void Processor::Process(int iter,double Esum)
 {
-    if(iter == 2 && Esum == Energy)
+    if(iter >= 2)
     {
         std::vector<double> Values(2,0);
         double angleX = 0;
