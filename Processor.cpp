@@ -24,6 +24,7 @@ Processor::Processor(int offset,
     }
 
     std::cout << "Created processor for E = " << Energy << " with " << nbins << " bins" << std::endl;
+    std::cout << "Processing Events from " << offset << " to " << m_offset << std::endl;
 
     thrN = offset;
     this->offset = offset;
