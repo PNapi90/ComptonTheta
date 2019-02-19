@@ -22,6 +22,8 @@ private:
 
     std::ofstream OUT;
 
+    bool Mode;
+
     int offset, fileAmount, m_offset,Energy,thrN,nbins;
 
     void LOAD(int iii);
@@ -32,8 +34,6 @@ private:
 
 
     std::string GetName(int iii);
-    std::string GetName(int iii,bool tmp);
-
 
 
 public:
@@ -41,7 +41,9 @@ public:
     Processor(int offset,
               int fileAmount,
               int _m_offset,
-              int _Energy);
+              int _Energy,
+              bool _Mode,
+              int _thrN);
     ~Processor();
 
     std::thread threading();
